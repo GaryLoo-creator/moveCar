@@ -36,6 +36,9 @@ export class role extends Component {
   aniCom: SkeletalAnimation = null;
   aniName: RoleAni;
   curAniType: stutusType;
+
+  // 是否可以上车
+  canGetOnCar: Boolean = false;
   onLoad() {
     this.aniCom = this.node.getComponent(SkeletalAnimation);
   }

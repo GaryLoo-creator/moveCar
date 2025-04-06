@@ -1,3 +1,4 @@
+import { parking } from "./parking";
 import { PoolManager } from "./PoolManager";
 import { role as roleComponent } from "./role";
 
@@ -10,16 +11,25 @@ export class roleManager {
   roleLength: number = 0;
   roleRoot: Node = null;
   rolePool: PoolManager = null;
+  parkingRoot: Node = null;
+
+  standByRole: roleComponent = null;
   /**
    * 初始化角色管理器
    * @param rolePrefad 人物预制体
    * @param roleLength 人物数量
    * @param roleRoot 人物根节点
    */
-  init(rolePrefad: Prefab, roleLength: number, roleRoot: Node) {
+  init(
+    rolePrefad: Prefab,
+    roleLength: number,
+    roleRoot: Node,
+    parkingRoot: Node
+  ) {
     this.rolePrefad = rolePrefad;
     this.roleLength = roleLength;
     this.roleRoot = roleRoot;
+    this.parkingRoot = parkingRoot;
     this.initRolePool();
     this.createRole();
   }
@@ -90,13 +100,32 @@ export class roleManager {
         role.setPosition(new Vec3(-8.866, 0, 0));
         roleCom.playAni("StandbyRole");
       } else if (roleCom.isHorizontalMove && rolePos.x >= 0) {
+        // 到达上车点
         roleCom.playAni("StandbyRole");
+        roleCom.canGetOnCar = true;
+        this.standByRole = roleCom;
         role.setRotationFromEuler(0, 0, 0);
         return;
       }
       roleCom.playAni("Run");
       role.setPosition(rolePos);
     });
+  }
+  /**
+   * 操作人物上车
+   */
+  getOnBoardHandle() {
+    if (!this.standByRole || !this.standByRole.canGetOnCar) return;
+
+    const parkingNode = this.parkingRoot.children.find((item) => {
+      return (
+        item.getComponent(parking).haveCar &&
+        !item.getComponent(parking).car.isRoleFull
+      );
+    });
+    if (parkingNode) {
+      this.standByRole.canGetOnCar = false;
+    }
   }
   /**
    * 每帧调用

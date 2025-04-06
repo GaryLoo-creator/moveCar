@@ -7,7 +7,9 @@ import {
   Prefab,
   Vec3,
 } from "cc";
+import { car } from "./car";
 import { carTween } from "./carTween";
+import { parking } from "./parking";
 import { roleManager } from "./roleManager";
 const { ccclass, property } = _decorator;
 
@@ -35,7 +37,12 @@ export class main extends Component {
   roleManager: roleManager = null;
   start() {
     this.roleManager = new roleManager();
-    this.roleManager.init(this.rolePrefad, 30, this.roleRoot);
+    this.roleManager.init(
+      this.rolePrefad,
+      30,
+      this.roleRoot,
+      this.node.getChildByName("parkingSpace")
+    );
 
     this.carMove();
   }
@@ -71,7 +78,8 @@ export class main extends Component {
       const leftBottomFixedPointWorldPos = this.node
         .getChildByPath("walls/bottom/leftBottomFIxedPoint")
         .getWorldPosition();
-      const parkNode = this.node.getChildByName("parkingSpace").children[2];
+      const parkingSpaceNode = this.node.getChildByName("parkingSpace");
+      const parkNode = parkingSpaceNode.children[2];
       console.log("parkNode", parkNode);
       const res = PhysicsSystem.instance.raycastClosestResult;
       console.log(res);
@@ -147,6 +155,9 @@ export class main extends Component {
       tweenAni.start(() => {
         carNode.getChildByName("arrow").active = false;
         carNode.getChildByPath("Bus_01_White/top.003").active = false;
+        // 设置停车位状态
+        parkingSpaceNode.getComponent(parking).haveCar = true;
+        parkingSpaceNode.getComponent(parking).car = carNode.getComponent(car);
       });
     }
   }
