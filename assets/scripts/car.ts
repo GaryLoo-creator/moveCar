@@ -26,6 +26,7 @@ export class car extends Component {
     this.curRoleNumber++;
 
     let roleCom = role.getComponent(roleComponent);
+    // Node.setParent() 方法的第二个参数是一个布尔值，表示是否保持节点在世界坐标系中的位置不变。
     // 当设置为 true 时，节点会保持其在世界空间中的位置、旋转和缩放不变，只改变其父节点关系。这意味着节点在屏幕上的视觉位置不会发生变化，即使父节点有不同的变换。
     role.setParent(
       this.node.getChildByName("seats").children[this.curRoleNumber - 1],
