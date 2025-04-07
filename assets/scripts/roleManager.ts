@@ -13,7 +13,7 @@ export class roleManager {
   rolePool: PoolManager = null;
   parkingRoot: Node = null;
 
-  standByRole: roleComponent = null;
+  standByRole: roleComponent;
   /**
    * 初始化角色管理器
    * @param rolePrefad 人物预制体
@@ -125,6 +125,9 @@ export class roleManager {
     });
     if (parkingNode) {
       this.standByRole.canGetOnCar = false;
+      // 操作人物上车逻辑
+      let carCom = parkingNode.getComponent(parking).car;
+      const isFull = carCom.addRole(this.standByRole.node); //访问组件上的节点
     }
   }
   /**
