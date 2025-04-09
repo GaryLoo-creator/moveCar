@@ -43,16 +43,19 @@ export class main extends Component {
       this.roleRoot,
       this.node.getChildByName("parkingSpace")
     );
+    this.scheduleOnce(() => {
+      this.roleManager.isArrowRoleUpdate = true;
+    }, 3);
 
     this.carMove();
   }
 
   update(deltaTime: number) {
-    this.roleManager.updateRolePos(deltaTime);
+    this.roleManager.update(deltaTime);
   }
 
   carMove() {
-    const carNode = this.node.getChildByName("bus_white");
+    const carNode = this.node.getChildByName("bus");
     const carPos = carNode.getWorldPosition();
     const forWord = carNode.forward.clone().multiplyScalar(-1);
     const ray = new geometry.Ray(
@@ -153,11 +156,12 @@ export class main extends Component {
       }
       tweenAni.enterParking(parkNode);
       tweenAni.start(() => {
+        carNode.setParent(parkNode, true);
         carNode.getChildByName("arrow").active = false;
         carNode.getChildByPath("Bus_01_White/top.003").active = false;
         // 设置停车位状态
-        parkingSpaceNode.getComponent(parking).haveCar = true;
-        parkingSpaceNode.getComponent(parking).car = carNode.getComponent(car);
+        parkNode.getComponent(parking).haveCar = true;
+        parkNode.getComponent(parking).car = carNode.getComponent(car);
       });
     }
   }

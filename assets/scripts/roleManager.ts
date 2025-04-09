@@ -14,6 +14,8 @@ export class roleManager {
   parkingRoot: Node = null;
 
   standByRole: roleComponent;
+
+  isArrowRoleUpdate: boolean = false;
   /**
    * 初始化角色管理器
    * @param rolePrefad 人物预制体
@@ -110,6 +112,7 @@ export class roleManager {
       roleCom.playAni("Run");
       role.setPosition(rolePos);
     });
+    this.getOnBoardHandle();
   }
   /**
    * 操作人物上车
@@ -118,6 +121,7 @@ export class roleManager {
     if (!this.standByRole || !this.standByRole.canGetOnCar) return;
 
     const parkingNode = this.parkingRoot.children.find((item) => {
+      // console.log(item.getComponent(parking));
       return (
         item.getComponent(parking).haveCar &&
         !item.getComponent(parking).car.isRoleFull
@@ -133,5 +137,8 @@ export class roleManager {
   /**
    * 每帧调用
    */
-  update() {}
+  update(deltaTime: number) {
+    if (!this.isArrowRoleUpdate) return;
+    this.updateRolePos(deltaTime);
+  }
 }
